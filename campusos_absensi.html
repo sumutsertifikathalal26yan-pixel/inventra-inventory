@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>CampusOS — Absensi Mahasiswa</title>
+<style>
+:root{--bg:#090b14;--panel:#171a27;--panel2:#222536;--text:#f5f6fb;--muted:#a4a8b8;--accent:#69e0b2;--blue:#6c8cff;--danger:#ff6b79}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 50% 20%,#30334d,#10111c 55%,#07080d);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;color:var(--text);min-height:100vh;display:grid;place-items:center;padding:20px}
+.phone{width:min(390px,100%);height:min(820px,calc(100dvh - 24px));min-height:610px;background:#05060a;border:7px solid #292b35;border-radius:48px;padding:8px;box-shadow:0 30px 90px #000b,inset 0 0 0 2px #555766;position:relative;overflow:hidden}
+.screen{height:100%;width:100%;border-radius:35px;overflow:hidden;position:relative;background:linear-gradient(155deg,#171a2a,#11131e 60%,#1a1c2b)}
+.status{height:27px;padding:8px 20px 0;display:flex;justify-content:space-between;align-items:center;font-size:11px;color:#e9eaf2;position:relative;z-index:5}
+.island{position:absolute;top:7px;left:50%;transform:translateX(-50%);width:104px;height:27px;background:#020307;border-radius:20px;z-index:8}
+.island:after{content:"";position:absolute;right:12px;top:9px;width:7px;height:7px;border-radius:50%;background:#111b35;box-shadow:0 0 4px #263b77}
+.view{position:absolute;inset:28px 0 0;overflow:auto;padding:18px 18px 42px;scrollbar-width:none}.view::-webkit-scrollbar{display:none}
+.hidden{display:none!important}.muted{color:var(--muted)}.small{font-size:12px}.tiny{font-size:10px;color:var(--muted)}
+.lock{inset:0;display:flex;flex-direction:column;align-items:center;text-align:center;padding:75px 18px 30px;background:linear-gradient(160deg,#191b2c,#10121d 70%,#24263a);z-index:4}
+.lockdate{font-size:13px;color:#d8d9e2}.clock{font-size:52px;font-weight:300;letter-spacing:-2px;margin:7px 0 26px}
+.notif-title{text-align:left;width:100%;font-size:11px;letter-spacing:1.3px;color:#aeb1c1;font-weight:700;margin-bottom:10px}
+.notifs{width:100%;display:grid;gap:9px}.notification{background:#ffffff16;border:1px solid #ffffff0b;border-radius:16px;padding:12px;display:flex;gap:11px;text-align:left;backdrop-filter:blur(14px)}
+.appicon{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;font-size:20px;flex:none;background:linear-gradient(145deg,#29c78a,#087e69)}
+.notification b{font-size:11px;display:block;margin-bottom:3px}.notification p{font-size:12px;margin:0;line-height:1.35}.notification small{font-size:10px;color:#c1c3ce}
+.unlock{margin-top:auto;width:100%}.pin-dots{display:flex;justify-content:center;gap:13px;margin:15px}.dot{width:9px;height:9px;border-radius:50%;border:1px solid #ddd}.dot.fill{background:#fff}
+.keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;max-width:260px;margin:12px auto}.key{border:0;border-radius:50%;width:62px;height:62px;margin:auto;background:#ffffff14;color:white;font-size:22px}.key:active{background:#ffffff35}
+.btn{border:0;border-radius:13px;padding:12px 15px;background:var(--accent);color:#08251b;font-weight:750;cursor:pointer}.btn.secondary{background:#ffffff16;color:white;border:1px solid #ffffff12}.btn.danger{background:#612d39;color:#ffdce0}.btn:disabled{opacity:.4}
+.homehead{display:flex;justify-content:space-between;align-items:center;margin:5px 0 18px}.greeting{font-size:13px;color:var(--muted)}h1{font-size:25px;margin:3px 0;font-weight:750;letter-spacing:-.7px}h2{font-size:18px;margin:0 0 14px}h3{font-size:14px;margin:0 0 8px}
+.profile{width:39px;height:39px;border-radius:50%;background:linear-gradient(135deg,#70e4bb,#5e7df6);display:grid;place-items:center;color:#10231e;font-weight:800}
+.hero{padding:17px;border-radius:21px;background:linear-gradient(120deg,#244c50,#27304c 75%);margin-bottom:18px;border:1px solid #ffffff12}
+.hero .big{font-size:29px;font-weight:750;margin:6px 0}.hero p{margin:0;color:#d5e4e7;font-size:12px}
+.sectionline{display:flex;justify-content:space-between;align-items:center;margin:18px 0 12px}
+.apps{display:grid;grid-template-columns:repeat(4,1fr);gap:19px 9px}.app{border:0;background:none;color:white;text-align:center;padding:0;cursor:pointer}.app .tile{width:56px;height:56px;border-radius:18px;margin:0 auto 7px;display:grid;place-items:center;font-size:25px;box-shadow:inset 0 1px #ffffff30,0 7px 16px #0003}.app span:last-child{font-size:10px;color:#e4e5ed}
+.tile.green{background:linear-gradient(145deg,#37d99a,#087d68)}.tile.blue{background:linear-gradient(145deg,#7ba1ff,#4559c8)}.tile.orange{background:linear-gradient(145deg,#ffb35c,#dc5d36)}.tile.pink{background:linear-gradient(145deg,#ff78b0,#9d3f8c)}.tile.gray{background:linear-gradient(145deg,#666b80,#333748)}.tile.purple{background:linear-gradient(145deg,#b18aff,#6647ba)}
+.card{background:#ffffff0c;border:1px solid #ffffff10;border-radius:18px;padding:14px;margin-bottom:12px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px}.statgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.stat{background:#ffffff0d;border-radius:15px;padding:13px}.stat strong{font-size:24px;display:block}.stat span{font-size:11px;color:var(--muted)}
+.field{width:100%;padding:12px;border:1px solid #ffffff20;background:#ffffff0d;color:white;border-radius:12px;margin:6px 0 12px;outline:none}.field option{background:#171a27}
+label{font-size:12px;color:#c8cad5}.listitem{display:flex;gap:11px;align-items:center;padding:12px 0;border-bottom:1px solid #ffffff12}.listitem:last-child{border:0}.badge{font-size:10px;padding:5px 8px;border-radius:20px;background:#1f5949;color:#9af0cd}.badge.warn{background:#5b4525;color:#ffd68b}
+.bottom{position:absolute;bottom:0;left:0;right:0;height:28px;display:grid;place-items:center;z-index:10;pointer-events:none}.gesture{width:108px;height:4px;border-radius:10px;background:#ffffffb0}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap}.toolbar .btn{flex:1}
+.control{position:absolute;inset:0;background:#141827f5;z-index:12;padding:35px 18px 30px;backdrop-filter:blur(25px);overflow:auto}.toggles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:20px 0}.toggle{background:#ffffff12;border:1px solid #ffffff10;border-radius:16px;padding:15px 6px;color:white;text-align:center;font-size:11px}.toggle.active{background:#477f86;border-color:#78e6c4}.toggle i{font-style:normal;font-size:22px;display:block;margin-bottom:8px}
+.drawer{position:absolute;inset:0;background:#090b14f2;z-index:11;padding:35px 18px;overflow:auto;backdrop-filter:blur(20px)}
+.modal{position:absolute;inset:0;background:#05060ad9;z-index:20;display:grid;place-items:center;padding:20px}.modalbox{width:100%;max-height:90%;overflow:auto;background:#1a1d2c;border:1px solid #ffffff20;border-radius:22px;padding:17px}
+video,canvas,.photo{width:100%;border-radius:15px;background:#07080d;max-height:300px;object-fit:cover}.album{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.album img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px}
+.toast{position:absolute;bottom:43px;left:50%;transform:translateX(-50%);background:#f2f4f8;color:#171923;padding:10px 15px;border-radius:20px;font-size:12px;z-index:30;white-space:nowrap;box-shadow:0 8px 30px #0007}
+.pullhint{font-size:10px;text-align:center;color:#8f93a5;margin:2px 0 5px}
+</style>
+</head>
+<body>
+<div class="phone"><div class="screen" id="screen">
+ <div class="island"></div>
+ <div class="status"><span id="statusTime">18:08</span><span>▮▮▮　◉　▰</span></div>
+ <section class="view lock" id="lockView">
+  <div class="lockdate" id="lockDate"></div><div class="clock" id="lockClock">18:08</div>
+  <div class="notif-title">NOTIFIKASI HARI INI</div>
+  <div class="notifs" id="lockNotifs"></div>
+  <div class="unlock">
+   <div class="small muted">Masukkan PIN untuk membuka CampusOS</div><div class="pin-dots" id="pinDots"></div>
+   <div class="keypad" id="keypad"></div>
+   <div class="tiny">PIN demo awal: <b>1234</b></div>
+  </div>
+ </section>
+ <section class="view hidden" id="homeView">
+  <div class="pullhint">Geser layar ke bawah untuk pusat kontrol</div>
+  <div class="homehead"><div><div class="greeting" id="greeting">Selamat datang</div><h1>CampusOS</h1></div><div class="profile" id="profileInitial">M</div></div>
+  <div class="hero"><div class="row"><span class="small">STATUS KEHADIRAN HARI INI</span><span class="badge" id="todayBadge">Belum absen</span></div><div class="big" id="todayStatus">Belum tercatat</div><p id="todaySub">Lakukan absensi saat berada di area kampus.</p></div>
+  <div class="sectionline"><h3>Aplikasi</h3><span class="tiny">CAMPUS SUITE</span></div>
+  <div class="apps">
+   <button class="app" data-open="attendance"><span class="tile green">📸</span><span>Absensi</span></button>
+   <button class="app" data-open="history"><span class="tile blue">🗓️</span><span>Riwayat</span></button>
+   <button class="app" data-open="stats"><span class="tile purple">📊</span><span>Statistik</span></button>
+   <button class="app" data-open="album"><span class="tile pink">🖼️</span><span>Album</span></button>
+   <button class="app" data-open="profile"><span class="tile orange">🎓</span><span>Profil</span></button>
+   <button class="app" data-open="activity"><span class="tile gray">📋</span><span>Aktivitas</span></button>
+   <button class="app" data-open="settings"><span class="tile gray">⚙️</span><span>Pengaturan</span></button>
+   <button class="app" data-open="help"><span class="tile blue">❔</span><span>Bantuan</span></button>
+  </div>
+  <div class="sectionline"><h3>Aktivitas terbaru</h3><button class="btn secondary" style="padding:7px 10px;font-size:10px" data-open="activity">Lihat semua</button></div>
+  <div class="card" id="homeRecent"><div class="small muted">Belum ada aktivitas.</div></div>
+ </section>
+ <section class="view hidden" id="appView">
+  <div class="row" style="margin-bottom:20px"><button class="btn secondary" id="backHome">‹ Kembali</button><span class="tiny">CAMPUSOS APP</span></div>
+  <div id="appContent"></div>
+ </section>
+ <div class="control hidden" id="controlPanel">
+  <div class="row"><div><div class="tiny">JUMAT, 30 OKTOBER</div><h1 id="controlClock">18:08</h1></div><button class="btn secondary" id="closeControl">Tutup ✕</button></div>
+  <div class="toggles" id="toggles"></div>
+  <div class="card"><div class="row"><span>☀️ Kecerahan layar</span><b id="brightVal">75%</b></div><input type="range" min="25" max="100" value="75" id="brightness" style="width:100%;margin-top:15px"></div>
+  <div class="card"><div class="row"><span>📶 Jaringan</span><b id="networkText">Wi-Fi aktif</b></div><p class="tiny">Kontrol jaringan ini hanya simulasi tampilan website dan tidak mengubah pengaturan sistem perangkat.</p></div>
+ </div>
+ <div class="drawer hidden" id="notificationDrawer">
+  <div class="row"><h2>Notifikasi</h2><button class="btn secondary" id="closeDrawer">Tutup ✕</button></div>
+  <div id="allNotifs"></div><button class="btn secondary" id="clearNotifs" style="width:100%;margin-top:12px">Hapus notifikasi</button>
+ </div>
+ <div class="modal hidden" id="modal"><div class="modalbox" id="modalContent"></div></div>
+ <div class="bottom"><div class="gesture"></div></div>
+ <div class="toast hidden" id="toast"></div>
+</div></div>
+<script>
+const $=s=>document.querySelector(s);
+const today=()=>new Date().toLocaleDateString('id-ID',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
+const time=()=>new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+const dateKey=()=>new Date().toISOString().slice(0,10);
+const load=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}};
+const save=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+let pin=load('campus_pin','1234'),entered='',unlocked=false,stream=null,coords=null, toggles=load('campus_toggles',{wifi:true,data:true,hotspot:false,airplane:false,silent:false,flash:false});
+let logs=load('campus_logs',[]), records=load('campus_records',[]), notices=load('campus_notices',[
+ {icon:'🎓',title:'CampusOS',body:'Selamat datang di sistem absensi mahasiswa.',ago:'Baru saja'}
+]),photos=load('campus_photos',[]);
+let profile=load('campus_profile',{name:'Muhammad Suryanyah',nim:'245740025',major:'Manajemen Informatika',className:'',campus:'AMIK ITMI Medan'});
+function log(action,detail=''){logs.unshift({action,detail,at:new Date().toLocaleString('id-ID')});logs=logs.slice(0,150);save('campus_logs',logs);renderRecent()}
+function notify(title,body,icon='🔔'){notices.unshift({icon,title,body,ago:'Baru saja'});notices=notices.slice(0,30);save('campus_notices',notices);renderNotifs()}
+function toast(s){let t=$('#toast');t.textContent=s;t.classList.remove('hidden');setTimeout(()=>t.classList.add('hidden'),2300)}
+function renderNotifs(){let html=notices.slice(0,5).map(n=>`<div class="notification"><div class="appicon">${n.icon}</div><div><b>${esc(n.title)}</b><p>${esc(n.body)}</p><small>${esc(n.ago)}</small></div></div>`).join('');$('#lockNotifs').innerHTML=html||'<div class="small muted">Tidak ada notifikasi</div>';$('#allNotifs').innerHTML=notices.map(n=>`<div class="notification" style="margin:9px 0"><div class="appicon">${n.icon}</div><div><b>${esc(n.title)}</b><p>${esc(n.body)}</p><small>${n.ago}</small></div></div>`).join('')||'<p class="muted">Tidak ada notifikasi.</p>'}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function clock(){let d=new Date();$('#lockClock').textContent=d.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});$('#statusTime').textContent=d.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});$('#lockDate').textContent=today();$('#controlClock').textContent=d.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});}
+setInterval(clock,1000);clock();
+function keypad(){let keys=['1','2','3','4','5','6','7','8','9','⌫','0','✓'];$('#keypad').innerHTML=keys.map(k=>`<button class="key" data-key="${k}">${k}</button>`).join('');$('#keypad').onclick=e=>{let k=e.target.dataset.key;if(!k)return;if(k==='⌫')entered=entered.slice(0,-1);else if(k==='✓'){if(entered===pin){unlocked=true;$('#lockView').classList.add('hidden');$('#homeView').classList.remove('hidden');log('Login','Berhasil membuka CampusOS');notify('Login berhasil','CampusOS berhasil dibuka.','🔓');toast('Selamat datang!')}else{toast('PIN salah, coba lagi');entered=''}}else if(entered.length<8)entered+=k;renderDots()}}
+function renderDots(){$('#pinDots').innerHTML=Array.from({length:4},(_,i)=>`<span class="dot ${i<entered.length?'fill':''}"></span>`).join('')}
+function renderRecent(){$('#homeRecent').innerHTML=logs.slice(0,3).map(x=>`<div class="listitem"><div>🕘</div><div style="flex:1"><b class="small">${esc(x.action)}</b><div class="tiny">${esc(x.detail)} · ${esc(x.at)}</div></div></div>`).join('')||'<div class="small muted">Belum ada aktivitas.</div>'}
+function currentRecord(){return records.find(r=>r.date===dateKey())}
+function refreshHome(){let r=currentRecord();$('#todayStatus').textContent=r?(r.status==='Hadir'?'Sudah Hadir':r.status):'Belum tercatat';$('#todayBadge').textContent=r?r.status:'Belum absen';$('#todaySub').textContent=r?`Tercatat pukul ${r.time} · ${r.locationText}`:'Lakukan absensi saat berada di area kampus.';$('#greeting').textContent=`Selamat ${new Date().getHours()<11?'pagi':new Date().getHours()<15?'siang':new Date().getHours()<18?'sore':'malam'}, ${profile.name.split(' ')[0]}`;$('#profileInitial').textContent=(profile.name[0]||'M').toUpperCase();renderRecent()}
+function app(title,body){$('#homeView').classList.add('hidden');$('#appView').classList.remove('hidden');$('#appContent').innerHTML=`<h1 style="margin-bottom:17px">${title}</h1>${body}`;$('#appView').scrollTop=0}
+function goHome(){$('#appView').classList.add('hidden');$('#homeView').classList.remove('hidden');refreshHome()}
+$('#backHome').onclick=goHome;
+document.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>openApp(b.dataset.open));
+function openApp(name){
+ if(name==='attendance')attendancePage();
+ if(name==='history')historyPage();
+ if(name==='stats')statsPage();
+ if(name==='album')albumPage();
+ if(name==='profile')profilePage();
+ if(name==='activity')activityPage();
+ if(name==='settings')settingsPage();
+ if(name==='help')helpPage();
+}
+function attendancePage(){let r=currentRecord();app('Absensi Mahasiswa',`
+ <div class="card"><div class="row"><b>📍 Lokasi & waktu</b><span class="badge">Real-time</span></div><p class="small" id="gpsText">Lokasi belum diambil. Izinkan akses GPS.</p><div class="small muted" id="gpsTime">${today()} · ${time()}</div><button class="btn secondary" id="getGps" style="width:100%;margin-top:12px">Ambil lokasi GPS</button></div>
+ <div class="card"><b>📷 Verifikasi wajah</b><p class="tiny">Kamera perangkat digunakan untuk mengambil foto saat absensi.</p><video id="camera" autoplay playsinline muted></video><canvas id="snap" class="hidden"></canvas><div class="toolbar" style="margin-top:10px"><button class="btn secondary" id="startCam">Buka kamera</button><button class="btn secondary" id="takePhoto" disabled>Ambil foto</button></div><div id="photoPreview"></div></div>
+ <div class="card"><label>Jenis absensi</label><select class="field" id="attendanceType"><option>Masuk</option><option>Pulang</option></select><label>Catatan (opsional)</label><input class="field" id="attendanceNote" placeholder="Contoh: Kelas Sistem Informasi"><button class="btn" id="submitAttendance" style="width:100%" ${r?'disabled':''}>${r?'Absensi hari ini sudah tercatat':'Kirim absensi'}</button><p class="tiny">Demo ini menyimpan data di perangkat. Validasi radius kampus dan server perlu ditambahkan pada backend.</p></div>`);
+ let photo=null;$('#getGps').onclick=()=>{if(!navigator.geolocation){toast('GPS tidak didukung browser');return}$('#gpsText').textContent='Mengambil lokasi…';navigator.geolocation.getCurrentPosition(p=>{coords={lat:p.coords.latitude,lon:p.coords.longitude,accuracy:p.coords.accuracy};$('#gpsText').textContent=`Lat ${coords.lat.toFixed(6)}, Lon ${coords.lon.toFixed(6)} · Akurasi ±${Math.round(coords.accuracy)} m`;$('#gpsTime').textContent=`${today()} · ${time()}`;toast('Lokasi berhasil diambil')},e=>{$('#gpsText').textContent='Gagal mengambil lokasi: '+e.message;toast('Periksa izin lokasi')},{enableHighAccuracy:true,timeout:15000,maximumAge:0})};
+ $('#startCam').onclick=async()=>{try{if(!navigator.mediaDevices?.getUserMedia)throw Error('Kamera membutuhkan HTTPS atau localhost.');stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'},audio:false});$('#camera').srcObject=stream;$('#takePhoto').disabled=false;toast('Kamera aktif')}catch(e){toast(e.message)}};
+ $('#takePhoto').onclick=()=>{let v=$('#camera'),c=$('#snap');if(!v.videoWidth){toast('Kamera belum siap');return}c.width=v.videoWidth;c.height=v.videoHeight;c.getContext('2d').drawImage(v,0,0);photo=c.toDataURL('image/jpeg',.78);$('#photoPreview').innerHTML=`<p class="tiny">Foto absensi siap</p><img class="photo" src="${photo}">`;toast('Foto berhasil diambil')};
+ $('#submitAttendance').onclick=()=>{if(!photo){toast('Ambil foto terlebih dahulu');return}if(!coords){toast('Ambil lokasi GPS terlebih dahulu');return}let now=new Date(),status='Hadir';let rec={id:Date.now(),date:dateKey(),time:time(),type:$('#attendanceType').value,status,lat:coords.lat,lon:coords.lon,accuracy:coords.accuracy,locationText:`${coords.lat.toFixed(4)}, ${coords.lon.toFixed(4)}`,note:$('#attendanceNote').value,photo};records=records.filter(x=>x.date!==dateKey());records.unshift(rec);save('campus_records',records);photos.unshift({id:rec.id,date:rec.date,time:rec.time,photo:rec.photo,type:rec.type});save('campus_photos',photos.slice(0,60));log('Absensi '+rec.type,`${status} · ${rec.locationText}`);notify('Absensi berhasil',`Absensi ${rec.type} tercatat pukul ${rec.time}.`,'✅');if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}refreshHome();toast('Absensi berhasil disimpan');attendancePage()};
+}
+function historyPage(){app('Riwayat Absensi',records.length?records.map(r=>`<div class="card"><div class="row"><b>${esc(r.date)}</b><span class="badge">${esc(r.status)}</span></div><p class="small">${esc(r.type)} · ${esc(r.time)}</p><p class="tiny">Lokasi: ${esc(r.locationText)} · Akurasi ±${Math.round(r.accuracy||0)} m</p>${r.note?`<p class="tiny">Catatan: ${esc(r.note)}</p>`:''}</div>`).join(''):'<div class="card muted">Belum ada riwayat absensi.</div>')}
+function statsPage(){let present=records.filter(r=>r.status==='Hadir').length,late=records.filter(r=>r.status==='Terlambat').length,absent=0,total=present+late+absent,pct=total?Math.round((present+late)/total*100):0;app('Statistik Kehadiran',`<div class="statgrid"><div class="stat"><strong>${present}</strong><span>Hadir</span></div><div class="stat"><strong>${late}</strong><span>Terlambat</span></div><div class="stat"><strong>${absent}</strong><span>Tidak hadir*</span></div><div class="stat"><strong>${pct}%</strong><span>Persentase tercatat</span></div></div><div class="card" style="margin-top:13px"><h3>Ringkasan</h3><p class="small">Total catatan absensi: ${records.length}</p><p class="tiny">*Tidak hadir belum dihitung otomatis karena jadwal kuliah dan kalender akademik belum terhubung.</p></div>`)}
+function albumPage(){app('Album Dokumentasi',photos.length?`<div class="album">${photos.map(p=>`<img src="${p.photo}" alt="Foto absensi" data-photo="${p.id}">`).join('')}</div><p class="tiny" style="margin-top:12px">Foto tersimpan secara lokal di browser perangkat ini.</p><button class="btn secondary" id="exportAlbum" style="width:100%">Ekspor data album (JSON)</button>`:'<div class="card muted">Album masih kosong. Foto akan muncul setelah absensi berhasil. </div>');$('#appContent').querySelectorAll('[data-photo]').forEach(im=>im.onclick=()=>showModal(`<h3>Dokumentasi absensi</h3><img class="photo" src="${im.src}"><button class="btn secondary" id="closeModal" style="width:100%;margin-top:12px">Tutup</button>`));let ex=$('#exportAlbum');if(ex)ex.onclick=()=>download('album-campusos.json',JSON.stringify(photos));}
+function profilePage(){app('Profil Mahasiswa',`<div class="card"><div class="profile" style="width:65px;height:65px;font-size:25px;margin-bottom:12px">${esc(profile.name[0]||'M')}</div><label>Nama lengkap</label><input class="field" id="pName" value="${esc(profile.name)}"><label>NIM</label><input class="field" id="pNim" value="${esc(profile.nim)}"><label>Program studi</label><input class="field" id="pMajor" value="${esc(profile.major)}"><label>Kelas</label><input class="field" id="pClass" value="${esc(profile.className)}"><label>Kampus</label><input class="field" id="pCampus" value="${esc(profile.campus)}"><button class="btn" id="saveProfile" style="width:100%">Simpan profil</button></div>`);$('#saveProfile').onclick=()=>{profile={name:$('#pName').value.trim(),nim:$('#pNim').value.trim(),major:$('#pMajor').value.trim(),className:$('#pClass').value.trim(),campus:$('#pCampus').value.trim()};save('campus_profile',profile);refreshHome();toast('Profil disimpan')}}
+function activityPage(){app('Log Aktivitas',logs.length?logs.map(x=>`<div class="listitem"><div>📌</div><div><b class="small">${esc(x.action)}</b><div class="tiny">${esc(x.detail)}<br>${esc(x.at)}</div></div></div>`).join(''):'<div class="card muted">Belum ada aktivitas.</div>')}
+function settingsPage(){app('Pengaturan',`<div class="card"><h3>Keamanan</h3><label>Ganti PIN layar kunci (4–8 angka)</label><input class="field" id="newPin" inputmode="numeric" maxlength="8" placeholder="PIN baru"><button class="btn" id="changePin" style="width:100%">Ubah PIN</button></div><div class="card"><h3>Data perangkat</h3><p class="tiny">Data disimpan pada browser ini. Menghapus data browser dapat menghilangkan riwayat dan foto.</p><button class="btn danger" id="clearData" style="width:100%">Hapus seluruh data lokal</button></div><div class="card"><button class="btn secondary" id="logout" style="width:100%">Kunci layar / Logout</button></div>`);$('#changePin').onclick=()=>{let p=$('#newPin').value;if(!/^\\d{4,8}$/.test(p)){toast('PIN harus 4–8 angka');return}pin=p;save('campus_pin',pin);toast('PIN berhasil diubah')};$('#clearData').onclick=()=>{if(confirm('Hapus semua data absensi, foto, log, dan notifikasi?')){['campus_logs','campus_records','campus_photos','campus_notices'].forEach(k=>localStorage.removeItem(k));logs=[];records=[];photos=[];notices=[];refreshHome();notify('Data dibersihkan','Penyimpanan lokal telah dikosongkan.');toast('Data lokal dihapus')}};$('#logout').onclick=()=>{log('Logout','Layar dikunci');unlocked=false;entered='';renderDots();$('#appView').classList.add('hidden');$('#homeView').classList.add('hidden');$('#lockView').classList.remove('hidden');toast('Layar dikunci')}}
+function helpPage(){app('Bantuan & Informasi',`<div class="card"><h3>Cara menggunakan</h3><p class="small">1. Masukkan PIN awal 1234.<br>2. Lengkapi profil mahasiswa.<br>3. Buka aplikasi Absensi.<br>4. Izinkan akses kamera dan lokasi.<br>5. Ambil foto, ambil GPS, lalu kirim absensi.</p></div><div class="card"><h3>Catatan browser</h3><p class="small">Kamera dan GPS umumnya hanya berjalan pada HTTPS atau localhost. Fitur Wi-Fi, SIM, hotspot, mode pesawat, senter dan hening di pusat kontrol adalah simulasi UI; browser tidak dapat mengaktifkan perangkat keras atau pengaturan sistem tersebut secara langsung.</p></div><div class="card"><h3>Untuk produksi kampus</h3><p class="small">Tambahkan backend, database, autentikasi server, verifikasi radius GPS, jadwal kuliah, deteksi manipulasi lokasi, dan penyimpanan foto aman. Jangan mengandalkan data localStorage sebagai bukti absensi resmi.</p></div>`)}
+function showModal(content){$('#modalContent').innerHTML=content;$('#modal').classList.remove('hidden');let c=$('#closeModal');if(c)c.onclick=()=>$('#modal').classList.add('hidden')}
+function download(name,data){let a=document.createElement('a'),blob=new Blob([data],{type:'application/json'});a.href=URL.createObjectURL(blob);a.download=name;a.click();URL.revokeObjectURL(a.href)}
+const toggleInfo=[['wifi','Wi-Fi','◉'],['data','Data seluler','▮'],['hotspot','Hotspot','⌁'],['airplane','Mode pesawat','✈'],['silent','Mode hening','🔕'],['flash','Senter','🔦']];
+function renderToggles(){$('#toggles').innerHTML=toggleInfo.map(([k,n,i])=>`<button class="toggle ${toggles[k]?'active':''}" data-toggle="${k}"><i>${i}</i>${n}<div class="tiny">${toggles[k]?'Aktif':'Nonaktif'}</div></button>`).join('');$('#toggles').querySelectorAll('button').forEach(b=>b.onclick=()=>{let k=b.dataset.toggle;toggles[k]=!toggles[k];if(k==='airplane'&&toggles.airplane){toggles.wifi=false;toggles.data=false}save('campus_toggles',toggles);renderToggles();$('#networkText').textContent=toggles.airplane?'Mode pesawat aktif':toggles.wifi?'Wi-Fi aktif':'Jaringan seluler';toast(b.textContent.trim().split('\n')[0]+' diperbarui')})}
+$('#closeControl').onclick=()=>$('#controlPanel').classList.add('hidden');$('#closeDrawer').onclick=()=>$('#notificationDrawer').classList.add('hidden');$('#clearNotifs').onclick=()=>{notices=[];save('campus_notices',notices);renderNotifs()};
+$('#brightness').oninput=e=>{let v=+e.target.value;$('#brightVal').textContent=v+'%';$('#screen').style.filter=`brightness(${v/100})`};
+renderToggles();$('#networkText').textContent=toggles.airplane?'Mode pesawat aktif':toggles.wifi?'Wi-Fi aktif':'Jaringan seluler';$('#brightness').value=75;
+let startY=null;$('#screen').addEventListener('touchstart',e=>{startY=e.touches[0].clientY},{passive:true});$('#screen').addEventListener('touchend',e=>{if(startY===null)return;let dy=e.changedTouches[0].clientY-startY;if(dy>90&&startY<150){if(unlocked){$('#controlPanel').classList.remove('hidden');renderToggles()}else $('#notificationDrawer').classList.remove('hidden')}else if(dy>90&&unlocked&&startY<300){$('#notificationDrawer').classList.remove('hidden')}startY=null},{passive:true});
+$('#screen').addEventListener('wheel',e=>{if(e.deltaY< -100&&unlocked&&$('#homeView').classList.contains('hidden')===false){$('#controlPanel').classList.remove('hidden')}});
+$('#statusTime').onclick=()=>unlocked?$('#controlPanel').classList.remove('hidden'):$('#notificationDrawer').classList.remove('hidden');
+keypad();renderDots();renderNotifs();refreshHome();
+</script>
+</body></html>
